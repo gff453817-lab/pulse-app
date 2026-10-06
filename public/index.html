@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نبض</title>
+<style>
+:root{--bg:#0a0a0c;--ink:#f3f3f5;--mute:#9a9aa5;--card:#16161a;--line:#26262c;--a:#fe2c55;--b:#25f4ee}
+html,body{height:100%;margin:0}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,'Segoe UI',Tahoma,sans-serif;display:flex;justify-content:center}
+#app{position:relative;width:100%;max-width:430px;height:100%;overflow:hidden;border-inline:1px solid var(--line)}
+.view{position:absolute;inset:0 0 58px 0;overflow-y:auto;display:none}.view.on{display:block}
+nav{position:absolute;bottom:0;inset-inline:0;height:58px;display:flex;align-items:center;justify-content:space-around;background:var(--bg);border-top:1px solid var(--line);z-index:5}
+nav button{background:none;border:0;color:var(--mute);font:inherit;font-size:.72rem;display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:4px 16px}
+nav button i{font-style:normal;font-size:1.35rem}nav button.on{color:var(--ink);font-weight:800}
+nav .plus i{background:linear-gradient(90deg,var(--b),var(--a));border-radius:10px;width:42px;text-align:center;font-weight:800;color:#fff}
+#v-feed{background:#000;scroll-snap-type:y mandatory}
+.reel{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;background:#000;color:#fff}
+.reel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.reel::after{content:"";position:absolute;inset:auto 0 0;height:50%;background:linear-gradient(transparent,#000a);pointer-events:none}
+.side{position:absolute;inset-inline-start:10px;bottom:90px;display:flex;flex-direction:column;gap:16px;align-items:center;z-index:2}
+.side button{background:none;border:0;color:#fff;font:inherit;font-size:.78rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;text-shadow:0 1px 4px #000}
+.side i{font-style:normal;font-size:2rem}
+.cap{position:absolute;bottom:16px;inset-inline:14px 80px;z-index:2}.cap p{margin:4px 0;line-height:1.6}
+.fol,.btn{font:inherit;cursor:pointer;border-radius:8px}
+.fol{border:1px solid #fff;background:none;color:#fff;font-size:.78rem;padding:1px 12px;margin-inline-start:8px}.fol.on{background:#fff3}
+.top{position:sticky;top:0;background:var(--bg);padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;z-index:2}
+.logo{font-weight:800;font-size:1.4rem;background:linear-gradient(90deg,var(--b),var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pad{padding:16px 14px}.stats{display:flex;justify-content:space-around;text-align:center;margin:12px 0}.stats b{display:block;font-size:1.2rem}.stats small{color:var(--mute)}
+.btn{border:0;padding:10px 16px;font-weight:700;background:linear-gradient(90deg,var(--b),var(--a));color:#fff;width:100%}.btn.g{background:var(--card);color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}.grid video{width:100%;aspect-ratio:3/4;object-fit:cover;background:#111;display:block}
+.modal{position:absolute;inset:0;background:#000b;z-index:9;display:none;align-items:flex-end}.modal.on{display:flex}
+.sheet{background:var(--bg);width:100%;max-height:75%;border-radius:18px 18px 0 0;padding:16px;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
+.sheet input,.sheet textarea{font:inherit;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);width:100%}
+.cm{font-size:.9rem;margin:6px 0}.cm small{color:var(--mute);display:block}.err{color:var(--a);font-size:.85rem;min-height:1.2em}
+#toast{position:absolute;bottom:76px;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:8px 18px;border-radius:99px;font-size:.85rem;z-index:10;opacity:0;transition:opacity .25s;pointer-events:none}#toast.on{opacity:1}
+.empty{text-align:center;color:var(--mute);padding:40px 20px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="view on" id="v-feed"></div>
+  <div class="view" id="v-me"></div>
+  <nav>
+    <button data-t="feed" class="on"><i>🏠</i>لك</button>
+    <button data-t="add" class="plus"><i>+</i></button>
+    <button data-t="me"><i>👤</i>حسابي</button>
+  </nav>
+  <div class="modal" id="m-auth"><div class="sheet">
+    <b id="at">تسجيل الدخول</b>
+    <input id="an" placeholder="اسم المستخدم (إنجليزي)" autocomplete="username">
+    <input id="ap" type="password" placeholder="كلمة المرور" autocomplete="current-password">
+    <div class="err" id="ae"></div>
+    <button class="btn" id="ago">دخول</button>
+    <button class="btn g" id="asw">ليس لديك حساب؟ سجّل</button>
+  </div></div>
+  <div class="modal" id="m-up"><div class="sheet">
+    <b>رفع فيديو</b>
+    <input id="uf" type="file" accept="video/*">
+    <textarea id="uc" rows="2" maxlength="200" placeholder="وصف الفيديو…"></textarea>
+    <div class="err" id="ue"></div>
+    <button class="btn" id="ugo">نشر</button>
+  </div></div>
+  <div class="modal" id="m-cm"><div class="sheet">
+    <b>التعليقات</b><div id="cl"></div>
+    <input id="ci" placeholder="أضف تعليقًا…" maxlength="300">
+    <button class="btn" id="cgo">نشر</button>
+  </div></div>
+  <div id="toast"></div>
+</div>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var T=localStorage.getItem('t'),ME=localStorage.getItem('n'),V=[],cv=0,reg=false;
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function toast(t){var e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('on')},1800)}
+function api(p,o){o=o||{};o.headers={};if(T)o.headers.Authorization='Bearer '+T;
+  if(o.json){o.body=JSON.stringify(o.json);o.headers['Content-Type']='application/json';o.method='POST'}
+  return fetch('/api'+p,o).then(function(r){return r.json().then(function(d){if(!r.ok)throw d;return d})})}
+function modal(id,on){$(id).classList.toggle('on',on)}
+document.querySelectorAll('.modal').forEach(function(m){m.onclick=function(e){if(e.target===m)m.classList.remove('on')}});
+function need(){if(T)return true;modal('m-auth',true);return false}
+
+/* الفيديوهات */
+function reelHTML(v,i){return '<div class="reel" data-i="'+i+'"><video src="/uploads/'+v.file+'" loop muted playsinline preload="metadata"></video>'+
+ '<div class="side"><button data-a="like" data-i="'+i+'"><i>'+(v.liked?'❤️':'🤍')+'</i><span>'+v.likes+'</span></button>'+
+ '<button data-a="cm" data-i="'+i+'"><i>💬</i><span>'+v.comments+'</span></button></div>'+
+ '<div class="cap"><b>@'+esc(v.name)+'</b>'+(v.name!==ME?'<button class="fol '+(v.following?'on':'')+'" data-a="fol" data-i="'+i+'">'+(v.following?'تتابعه':'متابعة')+'</button>':'')+'<p>'+esc(v.caption||'')+'</p></div></div>'}
+var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target.querySelector('video');if(!v)return;
+  if(e.isIntersecting){v.muted=false;v.play().catch(function(){v.muted=true;v.play().catch(function(){})})}else{v.pause();v.currentTime=0}})},{threshold:.6});
+function loadFeed(){api('/feed').then(function(d){V=d;var f=$('v-feed');
+  f.innerHTML=d.length?d.map(reelHTML).join(''):'<div class="empty">لا توجد فيديوهات بعد.<br>اضغط + وكن أول من ينشر!</div>';
+  f.querySelectorAll('.reel').forEach(function(r){io.observe(r)})})}
+
+$('app').addEventListener('click',function(e){
+  var b=e.target.closest('[data-a]');
+  if(b){var a=b.dataset.a,v=V[+b.dataset.i];
+    if(a==='like'){if(!need())return;api('/videos/'+v.id+'/like',{json:{}}).then(function(r){v.liked=r.liked;v.likes=r.likes;b.querySelector('i').textContent=r.liked?'❤️':'🤍';b.querySelector('span').textContent=r.likes})}
+    if(a==='cm'){cv=v.id;openC()}
+    if(a==='fol'){if(!need())return;api('/users/'+v.name+'/follow',{json:{}}).then(function(r){V.forEach(function(x){if(x.name===v.name)x.following=r.following});loadFeedKeep()})}
+    return}
+  var rl=e.target.closest('.reel');
+  if(rl){var vd=rl.querySelector('video');vd.paused?vd.play():vd.pause()}
+});
+function loadFeedKeep(){var y=$('v-feed').scrollTop;api('/feed').then(function(d){V=d;$('v-feed').innerHTML=d.map(reelHTML).join('');$('v-feed').scrollTop=y;$('v-feed').querySelectorAll('.reel').forEach(function(r){io.observe(r)})})}
+
+/* التعليقات */
+function openC(){modal('m-cm',true);$('cl').innerHTML='';api('/videos/'+cv+'/comments').then(function(d){
+  $('cl').innerHTML=d.length?d.map(function(c){return '<div class="cm"><b>'+esc(c.name)+'</b><small>'+esc(c.body)+'</small></div>'}).join(''):'<div class="empty">كن أول من يعلّق</div>'})}
+$('cgo').onclick=function(){if(!need())return;var b=$('ci').value.trim();if(!b)return;
+  api('/videos/'+cv+'/comments',{json:{body:b}}).then(function(){$('ci').value='';openC();loadFeedKeep()}).catch(function(e){toast(e.error||'خطأ')})};
+
+/* الدخول */
+function authUI(){$('at').textContent=reg?'إنشاء حساب':'تسجيل الدخول';$('ago').textContent=reg?'تسجيل':'دخول';$('asw').textContent=reg?'لديك حساب؟ ادخل':'ليس لديك حساب؟ سجّل'}
+$('asw').onclick=function(){reg=!reg;authUI()};
+$('ago').onclick=function(){api(reg?'/register':'/login',{json:{name:$('an').value.trim(),pass:$('ap').value}}).then(function(r){
+  T=r.token;ME=r.name;localStorage.setItem('t',T);localStorage.setItem('n',ME);$('ae').textContent='';modal('m-auth',false);loadFeedKeep();toast('أهلًا '+ME)}).catch(function(e){$('ae').textContent=e.error||'خطأ'})};
+
+/* الرفع */
+$('ugo').onclick=function(){var f=$('uf').files[0];if(!f){$('ue').textContent='اختر فيديو';return}
+  var fd=new FormData();fd.append('caption',$('uc').value);fd.append('video',f);$('ue').textContent='جاري الرفع…';
+  fetch('/api/videos',{method:'POST',headers:{Authorization:'Bearer '+T},body:fd}).then(function(r){return r.json().then(function(d){if(!r.ok)throw d})})
+  .then(function(){$('ue').textContent='';$('uf').value='';$('uc').value='';modal('m-up',false);toast('تم النشر ✅');loadFeed()}).catch(function(e){$('ue').textContent=e.error||'فشل الرفع'})};
+
+/* الملف الشخصي */
+function loadMe(){var m=$('v-me');
+  if(!T){m.innerHTML='<div class="empty">سجّل الدخول لترى ملفك.<br><br><button class="btn" id="li">دخول / تسجيل</button></div>';$('li').onclick=function(){modal('m-auth',true)};return}
+  api('/users/'+ME).then(function(u){m.innerHTML='<div class="top"><span class="logo">@'+esc(u.name)+'</span><button class="btn g" id="lo" style="width:auto;padding:4px 12px">خروج</button></div>'+
+   '<div class="pad"><div class="stats"><div><b>'+u.videos.length+'</b><small>فيديو</small></div><div><b>'+u.followers+'</b><small>متابِع</small></div><div><b>'+u.following+'</b><small>أتابع</small></div></div></div>'+
+   '<div class="grid">'+u.videos.map(function(v){return '<video src="/uploads/'+v.file+'#t=0.5" muted playsinline preload="metadata"></video>'}).join('')+'</div>';
+   $('lo').onclick=function(){T=ME=null;localStorage.clear();loadMe();loadFeedKeep()}})}
+
+document.querySelector('nav').onclick=function(e){var b=e.target.closest('button');if(!b)return;var t=b.dataset.t;
+  if(t==='add'){if(need())modal('m-up',true);return}
+  document.querySelectorAll('nav button').forEach(function(x){x.classList.toggle('on',x===b)});
+  document.querySelectorAll('.view').forEach(function(v){v.classList.toggle('on',v.id==='v-'+t)});
+  if(t==='me')loadMe();if(t==='feed')document.querySelectorAll('#v-feed video').forEach(function(v){v.pause()})};
+loadFeed();
+})();
+</script>
+</body>
+</html>
