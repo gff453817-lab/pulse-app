@@ -241,8 +241,23 @@ app.get('/api/feed', async (req, res) => {
   try {
     const me = req.u ? req.u.id : 0;
 
+    // تبويب «تتابع»: فيديوهات الأشخاص الذين يتابعهم المستخدم فقط
+    const followingOnly = req.query.tab === 'following';
+
+    if (followingOnly && !must(req, res)) return;
+
     const result = await pool.query(
-      SEL + `
+      SEL +
+        (followingOnly
+          ? `
+        WHERE EXISTS(
+          SELECT 1
+          FROM follows
+          WHERE follower = $1
+          AND followee = v.user_id
+        )`
+          : '') +
+        `
         ORDER BY v.created DESC
         LIMIT 50
       `,
