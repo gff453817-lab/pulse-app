@@ -8,8 +8,6 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { v2: cloudinary } = require('cloudinary');
 
-const { v2: cloudinary } = require('cloudinary');
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
