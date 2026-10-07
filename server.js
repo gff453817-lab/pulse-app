@@ -1,12 +1,16 @@
-
 const express = require('express');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
 const path = require('path');
+const multer = require('multer');
 const fs = require('fs');
 const crypto = require('crypto');
+const { v2: cloudinary } = require('cloudinary');
+
+cloudinary.config({
+  secure: true
+});
 
 const SECRET =
   process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
@@ -84,28 +88,17 @@ app.use((req, res, next) => {
 
   next();
 });
-
 const must = (req, res) =>
   req.u ||
   (res.status(401).json({ error: 'سجّل الدخول أولًا' }), null);
 
 const up = multer({
-  storage: multer.diskStorage({
-    destination: 'uploads',
-    filename: (req, file, cb) => {
-      cb(
-        null,
-        crypto.randomUUID() +
-          path.extname(file.originalname).toLowerCase().slice(0, 6)
-      );
-    }
-  }),
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 100 * 1024 * 1024
   },
   fileFilter: (req, file, cb) => {
-    cb(null, /^video\//.test(file.mimetype));
-  }
+cb(null, file.mimetype.startsWith('video/'));  }
 });
 
 const token = (u) =>
@@ -267,7 +260,24 @@ app.get('/api/feed', async (req, res) => {
 /* =========================
    Upload Video
 ========================= */
+const uploadVideoToCloudinary = (buffer) =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: 'video',
+        folder: 'pulse'
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
 
+    stream.end(buffer);
+  });
 app.post(
   '/api/videos',
   (req, res, next) => (must(req, res) ? next() : 0),
@@ -280,6 +290,8 @@ app.post(
         });
       }
 
+      const uploaded = await uploadVideoToCloudinary(req.file.buffer);
+
       await pool.query(
         `
         INSERT INTO videos(user_id, file, caption)
@@ -287,7 +299,7 @@ app.post(
         `,
         [
           req.u.id,
-          req.file.filename,
+          uploaded.secure_url,
           String(req.body.caption || '').slice(0, 200)
         ]
       );
