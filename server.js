@@ -319,7 +319,64 @@ app.post(
     }
   }
 );
+/* =========================
+   Delete Video
+========================= */
+app.delete('/api/videos/:id', async (req, res) => {
+  if (!must(req, res)) return;
 
+  try {
+    const videoId = Number(req.params.id);
+
+    const result = await pool.query(
+      `
+      SELECT id, user_id, file
+      FROM videos
+      WHERE id = $1
+      `,
+      [videoId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        error: 'الفيديو غير موجود'
+      });
+    }
+
+    const video = result.rows[0];
+
+    if (video.user_id !== req.u.id) {
+      return res.status(403).json({
+        error: 'لا يمكنك حذف هذا الفيديو'
+      });
+    }
+
+    await pool.query(
+      `DELETE FROM likes WHERE video_id = $1`,
+      [videoId]
+    );
+
+    await pool.query(
+      `DELETE FROM comments WHERE video_id = $1`,
+      [videoId]
+    );
+
+    await pool.query(
+      `DELETE FROM videos WHERE id = $1`,
+      [videoId]
+    );
+
+    res.json({
+      ok: true
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: 'تعذر حذف الفيديو'
+    });
+  }
+});
 
 /* =========================
    Like
