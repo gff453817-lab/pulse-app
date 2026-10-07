@@ -28,8 +28,7 @@ nav .plus i{background:linear-gradient(90deg,var(--b),var(--a));border-radius:10
 .logo{font-weight:800;font-size:1.4rem;background:linear-gradient(90deg,var(--b),var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
 .pad{padding:16px 14px}.stats{display:flex;justify-content:space-around;text-align:center;margin:12px 0}.stats b{display:block;font-size:1.2rem}.stats small{color:var(--mute)}
 .btn{border:0;padding:10px 16px;font-weight:700;background:linear-gradient(90deg,var(--b),var(--a));color:#fff;width:100%}.btn.g{background:var(--card);color:var(--ink)}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}.grid video{width:100%;aspect-ratio:3/4;object-fit:cover;background:#111;display:block}
-.modal{position:absolute;inset:0;background:#000b;z-index:9;display:none;align-items:flex-end}.modal.on{display:flex}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.video-item{position:relative;overflow:hidden;border-radius:8px}.grid video{width:100%;aspect-ratio:3/4;object-fit:cover;background:#111;display:block}.delete-video{position:absolute;bottom:8px;left:8px;right:8px;border:0;border-radius:8px;padding:7px;background:#000b;color:#fff;font:inherit;font-size:.8rem;cursor:pointer}.modal{position:absolute;inset:0;background:#000b;z-index:9;display:none;align-items:flex-end}.modal.on{display:flex}
 .sheet{background:var(--bg);width:100%;max-height:75%;border-radius:18px 18px 0 0;padding:16px;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
 .sheet input,.sheet textarea{font:inherit;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);width:100%}
 .cm{font-size:.9rem;margin:6px 0}.cm small{color:var(--mute);display:block}.err{color:var(--a);font-size:.85rem;min-height:1.2em}
@@ -127,14 +126,40 @@ function loadMe(){var m=$('v-me');
   if(!T){m.innerHTML='<div class="empty">سجّل الدخول لترى ملفك.<br><br><button class="btn" id="li">دخول / تسجيل</button></div>';$('li').onclick=function(){modal('m-auth',true)};return}
   api('/users/'+ME).then(function(u){m.innerHTML='<div class="top"><span class="logo">@'+esc(u.name)+'</span><button class="btn g" id="lo" style="width:auto;padding:4px 12px">خروج</button></div>'+
    '<div class="pad"><div class="stats"><div><b>'+u.videos.length+'</b><small>فيديو</small></div><div><b>'+u.followers+'</b><small>متابِع</small></div><div><b>'+u.following+'</b><small>أتابع</small></div></div></div>'+
-   '<div class="grid">'+u.videos.map(function(v){return '<video src="'+v.file+'#t=0.5" muted playsinline preload="metadata"></video>'}).join('')+'</div>';
+   '<div class="grid">'+u.videos.map(function(v){return '<div class="video-item"><video src="'+v.file+'#t=0.5" muted playsinline preload="metadata"></video><button class="delete-video" data-id="'+v.id+'">🗑️ حذف</button></div>'}).join('')+'</div>';
    $('lo').onclick=function(){T=ME=null;localStorage.clear();loadMe();loadFeedKeep()}})}
 
+document.getElementById('v-me').addEventListener('click', function(e){
+  var b=e.target.closest('.delete-video');
+  if(!b)return;
+
+  var id=b.dataset.id;
+
+  if(!confirm('هل تريد حذف هذا الفيديو؟'))return;
+
+  fetch('/api/videos/'+id,{
+    method:'DELETE',
+    headers:{
+      Authorization:'Bearer '+T
+    }
+  })
+  .then(function(r){
+    return r.json().then(function(d){
+      if(!r.ok)throw d;
+      return d;
+    });
+  })
+  .then(function(){
+    toast('تم حذف الفيديو ✅');
+    loadMe();
+    loadFeedKeep();
+  })
+  .catch(function(e){
+    toast(e.error||'تعذر حذف الفيديو');
+  });
+});
+
 document.querySelector('nav').onclick=function(e){var b=e.target.closest('button');if(!b)return;var t=b.dataset.t;
-  if(t==='add'){if(need())modal('m-up',true);return}
-  document.querySelectorAll('nav button').forEach(function(x){x.classList.toggle('on',x===b)});
-  document.querySelectorAll('.view').forEach(function(v){v.classList.toggle('on',v.id==='v-'+t)});
-  if(t==='me')loadMe();if(t==='feed')document.querySelectorAll('#v-feed video').forEach(function(v){v.pause()})};
 loadFeed();
 })();
 </script>
