@@ -82,7 +82,7 @@ document.querySelectorAll('.modal').forEach(function(m){m.onclick=function(e){if
 function need(){if(T)return true;modal('m-auth',true);return false}
 
 /* الفيديوهات */
-function reelHTML(v,i){return '<div class="reel" data-i="'+i+'"><video src="/uploads/'+v.file+'" loop muted playsinline preload="metadata"></video>'+
+function reelHTML(v,i){return '<div class="reel" data-i="'+i+'"><video src="'+v.file+'" loop muted playsinline preload="metadata"></video>'+
  '<div class="side"><button data-a="like" data-i="'+i+'"><i>'+(v.liked?'❤️':'🤍')+'</i><span>'+v.likes+'</span></button>'+
  '<button data-a="cm" data-i="'+i+'"><i>💬</i><span>'+v.comments+'</span></button></div>'+
  '<div class="cap"><b>@'+esc(v.name)+'</b>'+(v.name!==ME?'<button class="fol '+(v.following?'on':'')+'" data-a="fol" data-i="'+i+'">'+(v.following?'تتابعه':'متابعة')+'</button>':'')+'<p>'+esc(v.caption||'')+'</p></div></div>'}
