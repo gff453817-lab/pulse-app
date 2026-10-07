@@ -127,7 +127,7 @@ function loadMe(){var m=$('v-me');
   if(!T){m.innerHTML='<div class="empty">سجّل الدخول لترى ملفك.<br><br><button class="btn" id="li">دخول / تسجيل</button></div>';$('li').onclick=function(){modal('m-auth',true)};return}
   api('/users/'+ME).then(function(u){m.innerHTML='<div class="top"><span class="logo">@'+esc(u.name)+'</span><button class="btn g" id="lo" style="width:auto;padding:4px 12px">خروج</button></div>'+
    '<div class="pad"><div class="stats"><div><b>'+u.videos.length+'</b><small>فيديو</small></div><div><b>'+u.followers+'</b><small>متابِع</small></div><div><b>'+u.following+'</b><small>أتابع</small></div></div></div>'+
-   '<div class="grid">'+u.videos.map(function(v){return '<video src="/uploads/'+v.file+'#t=0.5" muted playsinline preload="metadata"></video>'}).join('')+'</div>';
+   '<div class="grid">'+u.videos.map(function(v){return '<video src="'+v.file+'#t=0.5" muted playsinline preload="metadata"></video>'}).join('')+'</div>';
    $('lo').onclick=function(){T=ME=null;localStorage.clear();loadMe();loadFeedKeep()}})}
 
 document.querySelector('nav').onclick=function(e){var b=e.target.closest('button');if(!b)return;var t=b.dataset.t;
