@@ -159,7 +159,33 @@ document.getElementById('v-me').addEventListener('click', function(e){
   });
 });
 
-document.querySelector('nav').onclick=function(e){var b=e.target.closest('button');if(!b)return;var t=b.dataset.t;
+document.querySelector('nav').onclick=function(e){
+  var b=e.target.closest('button');
+  if(!b)return;
+  var t=b.dataset.t;
+
+  if(t==='add'){
+    if(need())modal('m-up',true);
+    return;
+  }
+
+  document.querySelectorAll('nav button').forEach(function(x){
+    x.classList.toggle('on',x===b);
+  });
+
+  document.querySelectorAll('.view').forEach(function(v){
+    v.classList.toggle('on',v.id==='v-'+t);
+  });
+
+  if(t==='me')loadMe();
+
+  if(t==='feed'){
+    document.querySelectorAll('#v-feed video').forEach(function(v){
+      v.pause();
+    });
+  }
+};
+
 loadFeed();
 })();
 </script>
