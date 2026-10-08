@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>نبض</title>
 <style>
-:root{--bg:#000;--ink:#fff;--mute:#9a9aa5;--card:#16161a;--line:#26262c;--a:#fe2c55;--b:#25f4ee;--nav:calc(60px + env(safe-area-inset-bottom,0px))}
+:root{--bg:#000;--ink:#fff;--mute:#9a9aa5;--card:#16161a;--line:#26262c;--a:#fe2c55;--b:#25f4ee;--nav:calc(60px + env(safe-area-inset-bottom,0px));--st:calc(98px + env(safe-area-inset-top,0px))}
 html,body{height:100%;margin:0}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--ink);font-family:system-ui,'Segoe UI',Tahoma,sans-serif;display:flex;justify-content:center;align-items:center}
 #app{position:relative;width:100%;max-width:430px;height:100%;overflow:hidden;background:#000;border-inline:1px solid var(--line)}
@@ -25,13 +25,13 @@ nav .plus{padding:0 8px}
 nav .plus i{width:42px;height:30px;border-radius:9px;background:#fff;color:#000;box-shadow:-3px 0 0 var(--b),3px 0 0 var(--a);transition:transform .15s}
 nav .plus:active i{transform:scale(.92)}
 nav .plus svg{width:20px;height:20px;stroke-width:3}
-.tabs{position:absolute;top:0;inset-inline:0;z-index:4;display:none;justify-content:center;gap:24px;padding:calc(12px + env(safe-area-inset-top,0px)) 0 18px;background:linear-gradient(#000b,transparent);pointer-events:none}
+.tabs{position:absolute;top:var(--st);inset-inline:0;z-index:4;display:none;justify-content:center;gap:24px;padding:12px 0 18px;background:linear-gradient(#000b,transparent);pointer-events:none}
 .tabs.on{display:flex}
 .tabs button{pointer-events:auto;position:relative;background:none;border:0;color:#ffffffa8;font:inherit;font-size:1.05rem;font-weight:700;padding:4px 8px;cursor:pointer;text-shadow:0 1px 6px #000;transition:color .2s}
 .tabs button.on{color:#fff}
 .tabs button::after{content:"";position:absolute;bottom:-3px;inset-inline:22%;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--b),var(--a));transform:scaleX(0);transition:transform .25s}
 .tabs button.on::after{transform:scaleX(1)}
-#v-feed{background:#000;scroll-snap-type:y mandatory}
+#v-feed{top:var(--st);background:#000;scroll-snap-type:y mandatory}
 .reel{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;background:#000;color:#fff}
 .reel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .reel::after{content:"";position:absolute;inset:auto 0 0;height:50%;background:linear-gradient(transparent,#000c);pointer-events:none}
@@ -65,15 +65,54 @@ nav .plus svg{width:20px;height:20px;stroke-width:3}
 .info{display:none;grid-template-columns:1fr 1fr;gap:8px}
 .info div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
 .info small{display:block;color:var(--mute);font-size:.72rem;margin-bottom:2px}.info b{font-size:.95rem}
-#toast{position:absolute;bottom:calc(var(--nav) + 16px);left:50%;transform:translateX(-50%);background:#000d;color:#fff;border:1px solid var(--line);padding:8px 18px;border-radius:99px;font-size:.85rem;z-index:10;opacity:0;transition:opacity .25s;pointer-events:none}#toast.on{opacity:1}
+#toast{position:absolute;bottom:calc(var(--nav) + 16px);left:50%;transform:translateX(-50%);background:#000d;color:#fff;border:1px solid var(--line);padding:8px 18px;border-radius:99px;font-size:.85rem;z-index:30;opacity:0;transition:opacity .25s;pointer-events:none}#toast.on{opacity:1}
 .empty{text-align:center;color:var(--mute);padding:40px 20px;line-height:1.8}
 #v-feed .empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+.vq{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:99px;background:#ffffff22;font-size:.72rem;direction:ltr}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opts label{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--mute)}
+.opts select{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);width:100%}
+.opts select:focus{outline:0;border-color:var(--b)}
+.plan{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:.82rem;line-height:1.8}
+.plan div{display:flex;justify-content:space-between;gap:8px}.plan span{color:var(--mute)}.plan b{direction:ltr;text-align:end}
+.plan .warn{display:block;color:#ffd166;font-size:.78rem;line-height:1.6}
+.prog{display:none;height:6px;border-radius:6px;background:var(--card);overflow:hidden}.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--b),var(--a));transition:width .2s}
+.prog.ind i{width:35%;transition:none;animation:ind 1.1s ease-in-out infinite alternate}
+@keyframes ind{from{margin-inline-start:0}to{margin-inline-start:65%}}
+.ust{font-size:.85rem;color:var(--mute);min-height:1.2em;line-height:1.6}.ust.ok{color:var(--b)}
+.sheet button:disabled{opacity:.5;cursor:default}
+/* Stories */
+.stories{position:absolute;top:0;inset-inline:0;height:var(--st);padding:env(safe-area-inset-top,0px) 12px 0;background:#000;border-bottom:1px solid #ffffff14;z-index:4;display:none;align-items:center;gap:12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+.stories.on{display:flex}.stories::-webkit-scrollbar{display:none}
+.st{flex:none;width:66px;position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:0;color:#fff;font:inherit;font-size:.72rem;cursor:pointer;padding:0}
+.st:active .ring{transform:scale(.93)}
+.st span.nm{max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ring{width:62px;height:62px;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--b),var(--a));display:grid;place-items:center;transition:transform .15s}
+.ring.seen{background:#3a3a42}
+.ring.mine{background:linear-gradient(135deg,#fff,var(--b))}
+.ring.add{background:none;box-shadow:inset 0 0 0 2px #ffffff55;border:0}
+.ring .av{width:100%;height:100%;font-size:1.3rem;border:3px solid #000}
+.plus-b{position:absolute;top:42px;inset-inline-end:3px;width:20px;height:20px;border-radius:50%;background:var(--b);color:#000;border:2px solid #000;font-weight:900;font-size:.95rem;line-height:1;display:grid;place-items:center}
+#sv{position:absolute;inset:0;z-index:20;background:#000;display:none}#sv.on{display:block}
+.sv-media{position:absolute;inset:0;display:grid;place-items:center}
+.sv-media img,.sv-media video{width:100%;height:100%;object-fit:contain;background:#000}
+.sv-top{position:absolute;top:0;inset-inline:0;z-index:3;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 30px;background:linear-gradient(#000c,transparent);pointer-events:none}
+.sv-top button{pointer-events:auto}
+.sv-bars{display:flex;gap:4px}.sv-bars i{flex:1;height:3px;border-radius:3px;background:#ffffff44;overflow:hidden;display:block}.sv-bars b{display:block;height:100%;width:0;background:#fff}
+.sv-head{display:flex;align-items:center;gap:8px;margin-top:10px;text-shadow:0 1px 4px #000}.sv-head small{color:#ffffffb0}.sv-sp{flex:1}
+.sv-head button{background:#00000066;border:0;color:#fff;font:inherit;font-size:.82rem;border-radius:99px;padding:6px 12px;cursor:pointer}
+.sv-head .x{font-size:1.5rem;line-height:1;padding:2px 12px}
+.sv-z{position:absolute;top:0;bottom:0;width:40%;z-index:2;background:none;border:0;padding:0;touch-action:manipulation}
+.sv-z.n{left:0}.sv-z.p{right:0}
+#sv-spin{position:absolute;inset:0;display:none;place-items:center;color:#ffffffb0;z-index:1}
 </style>
 </head>
 <body>
 <div id="app">
   <div class="view on" id="v-feed"></div>
   <div class="view" id="v-me"></div>
+  <div class="stories on" id="stories"></div>
   <div class="tabs on" id="tabs">
     <button data-f="for" class="on">لك</button>
     <button data-f="fol">تتابع</button>
@@ -96,20 +135,56 @@ nav .plus svg{width:20px;height:20px;stroke-width:3}
     <input id="uf" type="file" accept="video/*">
     <video id="up-prev" class="prev" controls muted playsinline preload="metadata"></video>
     <div class="info" id="up-info">
-      <div><small>الدقة</small><b dir="ltr" id="i-res">-</b></div>
-      <div><small>الفريمات</small><b dir="ltr" id="i-fps">-</b></div>
+      <div><small>الدقة الأصلية</small><b dir="ltr" id="i-res">-</b></div>
+      <div><small>الفريمات الأصلية</small><b dir="ltr" id="i-fps">-</b></div>
       <div><small>المدة</small><b dir="ltr" id="i-dur">-</b></div>
       <div><small>الحجم</small><b dir="ltr" id="i-size">-</b></div>
     </div>
+    <div class="opts">
+      <label>الجودة<select id="uq">
+        <option value="auto" selected>أعلى جودة متاحة</option>
+        <option value="8k">8K — 7680×4320</option>
+        <option value="4k">4K — 3840×2160</option>
+        <option value="2k">2K — 2560×1440</option>
+        <option value="1k">1K — 1920×1080</option>
+        <option value="720">720p — 1280×720</option>
+      </select></label>
+      <label>الفريمات<select id="ur">
+        <option value="60" selected>60 FPS</option>
+        <option value="30">30 FPS</option>
+      </select></label>
+    </div>
+    <div class="plan" id="up-plan"></div>
     <textarea id="uc" rows="2" maxlength="200" placeholder="وصف الفيديو…"></textarea>
+    <div class="prog" id="up-prog"><i></i></div>
+    <div class="ust" id="us"></div>
     <div class="err" id="ue"></div>
-    <button class="btn" id="ugo">نشر</button>
+    <button class="btn" id="ugo">نشر الفيديو</button>
   </div></div>
   <div class="modal" id="m-cm"><div class="sheet">
     <b>التعليقات</b><div id="cl"></div>
     <input id="ci" placeholder="أضف تعليقًا…" maxlength="300">
     <button class="btn" id="cgo">نشر</button>
   </div></div>
+  <div class="modal" id="m-st"><div class="sheet">
+    <b>إضافة قصة</b>
+    <input id="sf" type="file" accept="image/*,video/*">
+    <img id="st-img" class="prev" alt="">
+    <video id="st-vid" class="prev" controls muted playsinline preload="metadata"></video>
+    <div class="ust" id="st-info"></div>
+    <div class="prog" id="st-prog"><i></i></div>
+    <div class="err" id="se"></div>
+    <button class="btn" id="sgo">نشر القصة</button>
+    <div class="ust">تُحذف القصة تلقائيًا بعد 24 ساعة.</div>
+  </div></div>
+  <div id="sv">
+    <div class="sv-media" id="sv-media"></div>
+    <button class="sv-z n" data-z="next" aria-label="التالي"></button>
+    <button class="sv-z p" data-z="prev" aria-label="السابق"></button>
+    <div class="sv-top"><div class="sv-bars" id="sv-bars"></div>
+      <div class="sv-head"><span class="av" id="sv-av"></span><b id="sv-nm"></b><small id="sv-tm"></small><span class="sv-sp"></span>
+        <button id="sv-del" style="display:none">🗑️ حذف</button><button class="x" id="sv-x" aria-label="إغلاق">×</button></div></div>
+  </div>
   <div id="toast"></div>
 </div>
 <script>
@@ -131,7 +206,8 @@ var ICO_CM='<svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.
 function reelHTML(v,i){return '<div class="reel" data-i="'+i+'"><video src="'+v.file+'" loop muted playsinline preload="metadata"></video>'+
  '<div class="side"><button data-a="like" data-i="'+i+'" class="'+(v.liked?'liked':'')+'"><span class="ic">'+ICO_HEART+'</span><span>'+v.likes+'</span></button>'+
  '<button data-a="cm" data-i="'+i+'"><span class="ic">'+ICO_CM+'</span><span>'+v.comments+'</span></button></div>'+
- '<div class="cap"><div class="who"><span class="av">'+esc(v.name.charAt(0))+'</span><b>@'+esc(v.name)+'</b>'+(v.name!==ME?'<button class="fol '+(v.following?'on':'')+'" data-a="fol" data-i="'+i+'">'+(v.following?'تتابعه':'متابعة')+'</button>':'')+'</div><p>'+esc(v.caption||'')+'</p></div></div>'}
+ '<div class="cap"><div class="who"><span class="av">'+esc(v.name.charAt(0))+'</span><b>@'+esc(v.name)+'</b>'+(v.name!==ME?'<button class="fol '+(v.following?'on':'')+'" data-a="fol" data-i="'+i+'">'+(v.following?'تتابعه':'متابعة')+'</button>':'')+'</div><p>'+esc(v.caption||'')+'</p>'+vq(v)+'</div></div>'}
+function vq(v){var f=v.meta&&v.meta.final;if(!f||!f.w)return '';return '<span class="vq">'+(+f.w)+'×'+(+f.h)+(f.fps?' · '+Math.round(+f.fps)+' FPS':'')+'</span>'}
 var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target.querySelector('video');if(!v)return;
   if(e.isIntersecting){v.muted=false;v.play().catch(function(){v.muted=true;v.play().catch(function(){})})}else{v.pause();v.currentTime=0}})},{threshold:.6});
 
@@ -163,7 +239,7 @@ $('app').addEventListener('click',function(e){
     if(a==='like'){if(!need())return;api('/videos/'+v.id+'/like',{json:{}}).then(function(r){v.liked=r.liked;v.likes=r.likes;b.classList.toggle('liked',r.liked);b.lastElementChild.textContent=r.likes;
       if(r.liked){b.classList.add('pop');setTimeout(function(){b.classList.remove('pop')},450)}}).catch(function(e){toast((e&&e.error)||'خطأ')})}
     if(a==='cm'){cv=v.id;openC()}
-    if(a==='fol'){if(!need())return;api('/users/'+v.name+'/follow',{json:{}}).then(function(r){V.forEach(function(x){if(x.name===v.name)x.following=r.following});loadFeedKeep()}).catch(function(e){toast((e&&e.error)||'خطأ')})}
+    if(a==='fol'){if(!need())return;api('/users/'+v.name+'/follow',{json:{}}).then(function(r){V.forEach(function(x){if(x.name===v.name)x.following=r.following});loadFeedKeep();loadStories()}).catch(function(e){toast((e&&e.error)||'خطأ')})}
     return}
   var rl=e.target.closest('.reel');
   if(rl){var vd=rl.querySelector('video');vd.paused?vd.play():vd.pause()}
@@ -179,17 +255,56 @@ $('cgo').onclick=function(){if(!need())return;var b=$('ci').value.trim();if(!b)r
 function authUI(){$('at').textContent=reg?'إنشاء حساب':'تسجيل الدخول';$('ago').textContent=reg?'تسجيل':'دخول';$('asw').textContent=reg?'لديك حساب؟ ادخل':'ليس لديك حساب؟ سجّل'}
 $('asw').onclick=function(){reg=!reg;authUI()};
 $('ago').onclick=function(){api(reg?'/register':'/login',{json:{name:$('an').value.trim(),pass:$('ap').value}}).then(function(r){
-  T=r.token;ME=r.name;localStorage.setItem('t',T);localStorage.setItem('n',ME);$('ae').textContent='';modal('m-auth',false);loadFeedKeep();toast('أهلًا '+ME)}).catch(function(e){$('ae').textContent=e.error||'خطأ'})};
+  T=r.token;ME=r.name;localStorage.setItem('t',T);localStorage.setItem('n',ME);$('ae').textContent='';modal('m-auth',false);loadFeedKeep();loadStories();toast('أهلًا '+ME)}).catch(function(e){$('ae').textContent=e.error||'خطأ'})};
 
-/* الرفع */
-$('ugo').onclick=function(){var f=$('uf').files[0];if(!f){$('ue').textContent='اختر فيديو';return}
-  var fd=new FormData();fd.append('caption',$('uc').value);fd.append('video',f);$('ue').textContent='جاري الرفع…';
-  fetch('/api/videos',{method:'POST',headers:{Authorization:'Bearer '+T},body:fd}).then(function(r){return r.json().then(function(d){if(!r.ok)throw d})})
-  .then(function(){$('ue').textContent='';$('uf').value='';$('uc').value='';resetUp();modal('m-up',false);toast('تم النشر ✅');loadFeed()}).catch(function(e){$('ue').textContent=e.error||'فشل الرفع'})};
+/* الرفع (مع اختيار الجودة والفريمات؛ المعالجة على الخادم كمهمة نتابع حالتها) */
+var QL={'8k':[7680,4320],'4k':[3840,2160],'2k':[2560,1440],'1k':[1920,1080],'720':[1280,720]};
+var QN={'8k':'8K','4k':'4K','2k':'2K','1k':'1K','720':'720p'};
+function evn(x){return Math.max(2,Math.round(x/2)*2)}
+/* نفس منطق الخادم: لا تكبير للدقة ولا توليد إطارات وهمية */
+function planUp(q,fr){if(!UP.w||!UP.h)return null;var w=UP.w,h=UP.h,below=false,sc=1;
+  if(QL[q]){var b=w>=h?QL[q]:[QL[q][1],QL[q][0]],raw=Math.min(b[0]/w,b[1]/h);below=raw>1.001;sc=Math.min(1,raw);if(sc<.999){w=evn(UP.w*sc);h=evn(UP.h*sc)}}
+  var f=UP.fps,fl=false;if(UP.fps&&UP.fps>fr*1.02){f=fr}else if(UP.fps&&UP.fps<fr*.98){fl=true}
+  return{w:w,h:h,fps:f,below:below,fpsLow:fl}}
+function fpsT(f){return f?Math.round(f*100)/100+' FPS':'غير متاح'}
+function renderPlan(){var el=$('up-plan');if(!$('uf').files[0]){el.style.display='none';return}
+  var q=$('uq').value,fr=+$('ur').value,p=planUp(q,fr),req=q==='auto'?'أعلى جودة متاحة':QN[q]+' ('+QL[q][0]+'×'+QL[q][1]+')',h='';
+  h+='<div><span>الدقة الأصلية</span><b>'+(UP.w?UP.w+'×'+UP.h:'غير متاح')+'</b></div>';
+  h+='<div><span>الدقة المطلوبة</span><b>'+req+'</b></div>';
+  h+='<div><span>الدقة النهائية</span><b>'+(p?p.w+'×'+p.h:'تُحدَّد على الخادم')+'</b></div>';
+  h+='<div><span>الفريمات المختارة / النهائية</span><b>'+fr+' / '+(p?fpsT(p.fps):'تُحدَّد على الخادم')+'</b></div>';
+  if(p&&p.below)h+='<span class="warn">الفيديو الأصلي أقل من الجودة المطلوبة؛ سيُنشر بدقته الأصلية دون تكبير وهمي.</span>';
+  if(p&&p.fpsLow)h+='<span class="warn">الفريمات الأصلية أقل من المطلوب؛ تبقى كما هي دون توليد إطارات وهمية.</span>';
+  el.innerHTML=h;el.style.display='block'}
+$('uq').onchange=renderPlan;$('ur').onchange=renderPlan;
+function upStatus(t,pct,ok){var s=$('us'),p=$('up-prog');s.textContent=t;s.classList.toggle('ok',!!ok);
+  if(pct===undefined){p.style.display='none';return}p.style.display='block';p.classList.toggle('ind',pct===null);if(pct!==null)p.firstChild.style.width=pct+'%'}
+function upEnd(){UP.busy=false;$('ugo').disabled=false}
+function upFail(m){upEnd();upStatus('');$('ue').textContent=m}
+function pollJob(id,fails){setTimeout(function(){api('/videos/jobs/'+id).then(function(j){
+  if(j.status==='processing')upStatus('جاري تجهيز الفيديو...',null);
+  else if(j.status==='uploading')upStatus('جاري رفع الفيديو...',null);
+  else if(j.status==='error')return upFail(j.error||'تعذر رفع الفيديو');
+  else if(j.status==='done'){var r=j.result||{},f=r.final,t='تم النشر بنجاح ✅';
+    if(f&&f.w)t+='\nالدقة النهائية: '+f.w+'×'+f.h+' · '+fpsT(f.fps);if(r.note)t+='\n'+r.note;
+    upStatus(t,100,true);$('us').style.whiteSpace='pre-line';toast('تم النشر ✅');loadFeed();
+    setTimeout(function(){upEnd();$('uf').value='';$('uc').value='';resetUp();upStatus('');$('us').style.whiteSpace='';modal('m-up',false)},r.note?4500:2500);return}
+  pollJob(id,0)}).catch(function(e){if(e&&e.error&&!e.status&&fails>=0&&/غير موجودة/.test(e.error))return upFail('فُقدت متابعة المهمة، تحقق من الرئيسية قبل إعادة المحاولة');
+  if(fails>=6)return upFail('تعذر متابعة حالة الرفع');pollJob(id,fails+1)})},1500)}
+$('ugo').onclick=function(){if(UP.busy)return;var f=$('uf').files[0];if(!f){$('ue').textContent='اختر فيديو';return}
+  if(!need())return;$('ue').textContent='';
+  var fd=new FormData();fd.append('caption',$('uc').value);fd.append('quality',$('uq').value);fd.append('fps',$('ur').value);fd.append('video',f);
+  UP.busy=true;$('ugo').disabled=true;upStatus('جاري إرسال الفيديو… 0%',0);
+  var x=new XMLHttpRequest();x.open('POST','/api/videos');x.setRequestHeader('Authorization','Bearer '+T);
+  x.upload.onprogress=function(e){if(e.lengthComputable){var p=Math.round(e.loaded/e.total*100);upStatus(p>=100?'جاري تجهيز الفيديو...':'جاري إرسال الفيديو… '+p+'%',p>=100?null:p)}};
+  x.onload=function(){var d={};try{d=JSON.parse(x.responseText)}catch(z){}
+    if(x.status>=200&&x.status<300&&d.job){upStatus('جاري تجهيز الفيديو...',null);pollJob(d.job,0)}else upFail(d.error||'فشل الرفع')};
+  x.onerror=function(){upFail('تعذر الاتصال بالخادم')};
+  x.send(fd)};
 
 
 /* معلومات الفيديو قبل النشر (من Metadata المتصفح) */
-var UP={url:null,tok:0};
+var UP={url:null,tok:0,w:0,h:0,fps:null,busy:false};
 function setI(k,t){$('i-'+k).textContent=t}
 function fmtDur(s){var n=Math.max(s>0?1:0,Math.round(s)),h=Math.floor(n/3600),m=Math.floor(n%3600/60),c=n%60;function p(x){return x<10?'0'+x:''+x}return (h?h+':':'')+p(m)+':'+p(c)}
 function fmtSize(b){return b>=1048576?(b/1048576).toFixed(b>=10485760?0:1)+' MB':Math.max(1,Math.round(b/1024))+' KB'}
@@ -210,18 +325,20 @@ function measureFps(v,tok,done){
   var p=v.play();if(p&&p.catch)p.catch(fin);
   v.requestVideoFrameCallback(cb)}
 function resetUp(){UP.tok++;var pv=$('up-prev');try{pv.pause()}catch(x){}
-  pv.removeAttribute('src');pv.load();pv.style.display='none';$('up-info').style.display='none';
+  pv.removeAttribute('src');pv.load();pv.style.display='none';$('up-info').style.display='none';UP.w=UP.h=0;UP.fps=null;$('up-plan').style.display='none';
   if(UP.url){URL.revokeObjectURL(UP.url);UP.url=null}}
 $('uf').onchange=function(){resetUp();var f=this.files[0];if(!f)return;
   var tok=++UP.tok,pv=$('up-prev');UP.url=URL.createObjectURL(f);
   pv.style.display='block';$('up-info').style.display='grid';
   setI('size',fmtSize(f.size));setI('res','…');setI('dur','…');setI('fps','…');
+  renderPlan();
   $('ue').textContent=f.size>100*1024*1024?'حجم الفيديو أكبر من 100 ميجا وسيرفضه الخادم':'';
   pv.onloadedmetadata=function(){if(tok!==UP.tok)return;
+    UP.w=pv.videoWidth;UP.h=pv.videoHeight;renderPlan();
     setI('res',pv.videoWidth&&pv.videoHeight?pv.videoWidth+' × '+pv.videoHeight:'غير متاح');
     setI('dur',isFinite(pv.duration)?fmtDur(pv.duration):'غير متاح');
-    measureFps(pv,tok,function(fps){if(tok!==UP.tok)return;setI('fps',fps?fps+' FPS':'غير متاح');try{pv.currentTime=0}catch(x){}})};
-  pv.onerror=function(){if(tok!==UP.tok)return;setI('res','غير متاح');setI('dur','غير متاح');setI('fps','غير متاح')};
+    measureFps(pv,tok,function(fps){if(tok!==UP.tok)return;UP.fps=fps;renderPlan();setI('fps',fps?fps+' FPS':'غير متاح');try{pv.currentTime=0}catch(x){}})};
+  pv.onerror=function(){if(tok!==UP.tok)return;setI('res','غير متاح');setI('dur','غير متاح');setI('fps','غير متاح');renderPlan()};
   pv.src=UP.url};
 new MutationObserver(function(){if(!$('m-up').classList.contains('on'))$('up-prev').pause()}).observe($('m-up'),{attributes:true,attributeFilter:['class']});
 
@@ -231,7 +348,7 @@ function loadMe(){var m=$('v-me');
   api('/users/'+ME).then(function(u){m.innerHTML='<div class="top"><span class="logo">@'+esc(u.name)+'</span><button class="btn g" id="lo" style="width:auto;padding:4px 12px">خروج</button></div>'+
    '<div class="pad"><div class="av big">'+esc(u.name.charAt(0))+'</div><div class="stats"><div><b>'+u.videos.length+'</b><small>فيديو</small></div><div><b>'+u.followers+'</b><small>متابِع</small></div><div><b>'+u.following+'</b><small>أتابع</small></div></div></div>'+
    '<div class="grid">'+u.videos.map(function(v){return '<div class="video-item"><video src="'+v.file+'#t=0.5" muted playsinline preload="metadata"></video><button class="delete-video" data-id="'+v.id+'">🗑️ حذف</button></div>'}).join('')+'</div>';
-   $('lo').onclick=function(){T=ME=null;localStorage.clear();loadMe();loadFeedKeep()}})}
+   $('lo').onclick=function(){T=ME=null;localStorage.clear();loadMe();loadFeedKeep();loadStories()}})}
 
 document.getElementById('v-me').addEventListener('click', function(e){
   var b=e.target.closest('.delete-video');
@@ -282,6 +399,8 @@ document.querySelector('nav').onclick=function(e){
   });
 
   $('tabs').classList.toggle('on',t==='feed');
+  $('stories').classList.toggle('on',t==='feed');
+  if(t==='feed')loadStories();
 
   if(t==='me')loadMe();
 
@@ -292,6 +411,91 @@ document.querySelector('nav').onclick=function(e){
   }
 };
 
+/* ===== Stories ===== */
+var SG=[],SEEN={};try{SEEN=JSON.parse(localStorage.getItem('sv')||'{}')}catch(x){}
+function saveSeen(){try{localStorage.setItem('sv',JSON.stringify(SEEN))}catch(x){}}
+function unseen(g){return g.stories.some(function(s){return !SEEN[s.id]})}
+function ago(t){var m=Math.floor((Date.now()-new Date(t).getTime())/60000);if(m<1)return 'الآن';if(m<60)return 'منذ '+m+' د';return 'منذ '+Math.floor(m/60)+' س'}
+function renderStrip(){var mine=null,h='';
+  SG.forEach(function(g,i){g.i=i;if(g.mine)mine=g});
+  h+='<button class="st" data-me="1"'+(mine?' data-g="'+mine.i+'"':'')+'><span class="ring '+(mine?'mine':'add')+'"><span class="av">'+(ME?esc(ME.charAt(0)):'+')+'</span></span><span class="plus-b" data-add="1">+</span><span class="nm">قصتك</span></button>';
+  SG.forEach(function(g){if(g.mine)return;h+='<button class="st" data-g="'+g.i+'"><span class="ring'+(unseen(g)?'':' seen')+'"><span class="av">'+esc(g.name.charAt(0))+'</span></span><span class="nm">'+esc(g.name)+'</span></button>'});
+  $('stories').innerHTML=h}
+function loadStories(){api('/stories').then(function(d){SG=d;renderStrip()}).catch(function(){SG=[];renderStrip()})}
+function openAddStory(){if(need())modal('m-st',true)}
+$('stories').onclick=function(e){var b=e.target.closest('.st');if(!b)return;
+  if(e.target.closest('[data-add]')||(b.dataset.me&&b.dataset.g===undefined)){openAddStory();return}
+  openSV(+b.dataset.g,0)};
+
+/* إضافة قصة */
+var ST={url:null,busy:false};
+function stReset(){var im=$('st-img'),vd=$('st-vid');try{vd.pause()}catch(x){}vd.removeAttribute('src');vd.load();im.removeAttribute('src');im.style.display=vd.style.display='none';
+  if(ST.url){URL.revokeObjectURL(ST.url);ST.url=null}$('st-info').textContent='';$('se').textContent='';$('st-prog').style.display='none'}
+$('sf').onchange=function(){stReset();var f=this.files[0];if(!f)return;
+  var vid=/^video\//.test(f.type),img=/^image\//.test(f.type);
+  if(!vid&&!img){$('se').textContent='اختر صورة أو فيديو فقط';return}
+  if(f.size>100*1024*1024){$('se').textContent='الملف أكبر من 100 ميجا'}
+  ST.url=URL.createObjectURL(f);var el=vid?$('st-vid'):$('st-img');el.src=ST.url;el.style.display='block';
+  $('st-info').textContent=(vid?'فيديو':'صورة')+' · '+fmtSize(f.size)};
+$('sgo').onclick=function(){if(ST.busy)return;var f=$('sf').files[0];if(!f){$('se').textContent='اختر صورة أو فيديو';return}
+  if(!/^(image|video)\//.test(f.type)){$('se').textContent='اختر صورة أو فيديو فقط';return}
+  if(!need())return;$('se').textContent='';var fd=new FormData();fd.append('file',f);
+  var pg=$('st-prog');pg.style.display='block';pg.classList.remove('ind');pg.firstChild.style.width='0%';
+  ST.busy=true;$('sgo').disabled=true;$('st-info').textContent='جاري نشر القصة…';
+  function fail(m){ST.busy=false;$('sgo').disabled=false;pg.style.display='none';$('st-info').textContent='';$('se').textContent=m}
+  var x=new XMLHttpRequest();x.open('POST','/api/stories');x.setRequestHeader('Authorization','Bearer '+T);
+  x.upload.onprogress=function(e){if(e.lengthComputable){var p=e.loaded/e.total*100;pg.firstChild.style.width=p+'%';if(p>=100)pg.classList.add('ind')}};
+  x.onload=function(){var d={};try{d=JSON.parse(x.responseText)}catch(z){}
+    if(x.status>=200&&x.status<300){ST.busy=false;$('sgo').disabled=false;$('sf').value='';stReset();modal('m-st',false);toast('تمت إضافة القصة ✅');loadStories()}else fail(d.error||'تعذر نشر القصة')};
+  x.onerror=function(){fail('تعذر الاتصال بالخادم')};x.send(fd)};
+new MutationObserver(function(){if(!$('m-st').classList.contains('on'))try{$('st-vid').pause()}catch(x){}}).observe($('m-st'),{attributes:true,attributeFilter:['class']});
+
+/* عارض القصص */
+var SV={g:0,i:0,tok:0,kind:'',el:null,t:0,dur:0,hold:false,raf:0},CAP=30;
+function openSV(gi,si){if(!SG[gi])return;SV.g=gi;SV.i=si||0;SV.hold=false;
+  document.querySelectorAll('#v-feed video').forEach(function(v){v.pause()});$('sv').classList.add('on');showS()}
+function closeSV(){SV.tok++;cancelAnimationFrame(SV.raf);$('sv').classList.remove('on');$('sv-media').innerHTML='';SV.el=null;renderStrip();
+  var f=$('v-feed'),rs=f.querySelectorAll('.reel'),k=Math.round(f.scrollTop/(f.clientHeight||1)),v=rs[k]&&rs[k].querySelector('video');
+  if(v&&$('v-feed').classList.contains('on'))v.play().catch(function(){v.muted=true;v.play().catch(function(){})})}
+function showS(){var g=SG[SV.g],s=g&&g.stories[SV.i];if(!s){closeSV();return}
+  cancelAnimationFrame(SV.raf);var tok=++SV.tok;SV.t=0;SV.dur=0;SV.kind=s.type==='video'?'vid':'img';SV.hold=false;
+  $('sv-bars').innerHTML=g.stories.map(function(x,k){return '<i><b style="width:'+(k<SV.i?100:0)+'%"></b></i>'}).join('');
+  $('sv-av').textContent=g.name.charAt(0);$('sv-nm').textContent=g.mine?'قصتك':'@'+g.name;$('sv-tm').textContent=ago(s.created_at);
+  $('sv-del').style.display=g.mine?'':'none';
+  SEEN[s.id]=1;saveSeen();
+  var m=$('sv-media');m.innerHTML='';
+  if(SV.kind==='img'){var im=new Image();im.alt='';im.onload=function(){if(tok===SV.tok)loop(tok)};im.onerror=function(){if(tok===SV.tok){toast('تعذر تحميل القصة');setTimeout(function(){if(tok===SV.tok)svNext()},900)}};im.src=s.file;m.appendChild(im);SV.el=im}
+  else{var v=document.createElement('video');v.muted=true;v.defaultMuted=true;v.setAttribute('muted','');v.setAttribute('playsinline','');v.playsInline=true;v.autoplay=true;
+    v.onloadedmetadata=function(){if(tok!==SV.tok)return;SV.dur=Math.min(isFinite(v.duration)&&v.duration>0?v.duration:CAP,CAP)};
+    v.onended=function(){if(tok===SV.tok)svNext()};
+    v.onerror=function(){if(tok===SV.tok){toast('تعذر تشغيل القصة');setTimeout(function(){if(tok===SV.tok)svNext()},900)}};
+    v.src=s.file;m.appendChild(v);SV.el=v;var p=v.play();if(p&&p.catch)p.catch(function(){});loop(tok)}}
+function loop(tok){var last=performance.now();
+  (function step(now){if(tok!==SV.tok)return;var dt=now-last,p=0;last=now;
+    if(SV.kind==='img'){if(!SV.hold)SV.t+=dt;p=SV.t/5000}
+    else p=SV.dur?SV.el.currentTime/SV.dur:0;
+    var b=document.querySelector('#sv-bars i:nth-child('+(SV.i+1)+') b');if(b)b.style.width=Math.min(100,p*100)+'%';
+    if(p>=1){svNext();return}
+    SV.raf=requestAnimationFrame(step)})(last)}
+function svNext(){var g=SG[SV.g];if(g&&SV.i<g.stories.length-1)SV.i++;else if(SV.g<SG.length-1){SV.g++;SV.i=0}else{closeSV();return}showS()}
+function svPrev(){if(SV.i>0)SV.i--;else if(SV.g>0){SV.g--;SV.i=0}showS()}
+function svHold(on){SV.hold=on;if(SV.kind==='vid'&&SV.el){on?SV.el.pause():SV.el.play().catch(function(){})}}
+var holdT=0,held=false;
+$('sv').addEventListener('pointerdown',function(e){if(!e.target.closest('.sv-z'))return;held=false;clearTimeout(holdT);holdT=setTimeout(function(){held=true;svHold(true)},220)});
+$('sv').addEventListener('pointerup',function(e){var z=e.target.closest('.sv-z');clearTimeout(holdT);if(held){held=false;svHold(false);return}
+  if(z)z.dataset.z==='next'?svNext():svPrev()});
+$('sv').addEventListener('pointercancel',function(){clearTimeout(holdT);if(held){held=false;svHold(false)}});
+$('sv-x').onclick=closeSV;
+document.addEventListener('keydown',function(e){if(!$('sv').classList.contains('on'))return;
+  if(e.key==='Escape')closeSV();else if(e.key==='ArrowLeft')svNext();else if(e.key==='ArrowRight')svPrev()});
+$('sv-del').onclick=function(){var g=SG[SV.g],s=g&&g.stories[SV.i];if(!s||!g.mine)return;
+  svHold(true);if(!confirm('هل تريد حذف هذه القصة؟')){svHold(false);return}
+  fetch('/api/stories/'+s.id,{method:'DELETE',headers:{Authorization:'Bearer '+T}}).then(function(r){return r.json().then(function(d){if(!r.ok)throw d;return d})}).then(function(){
+    toast('تم حذف القصة ✅');g.stories.splice(SV.i,1);
+    if(!g.stories.length){SG.splice(SV.g,1);if(SV.g>=SG.length){closeSV();loadStories();return}SV.i=0}else if(SV.i>=g.stories.length)SV.i=g.stories.length-1;
+    showS();renderStrip()}).catch(function(e){svHold(false);toast((e&&e.error)||'تعذر حذف القصة')})};
+
+renderStrip();loadStories();
 loadFeed();
 })();
 </script>
